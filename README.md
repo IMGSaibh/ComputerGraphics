@@ -1,2 +1,2 @@
-# ComputerGraphics
+# ComputerGraphics through OpenGL
 
