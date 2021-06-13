@@ -15,10 +15,16 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="OpenGL.cpp">
+    <ClCompile Include="OpenGL_start.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="glad.c">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="UniformVars.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="VertsWithColor.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
   </ItemGroup>
