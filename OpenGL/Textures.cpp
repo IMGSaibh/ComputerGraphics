@@ -1,13 +1,12 @@
 
-
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
-
 #include "shaderLoad.h"
 #include "stb_image.h"
-//#include "Utility.h"
 #include "Utility.h"
+
+//tutorial here https://learnopengl.com/Getting-started/Textures
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow* window);
@@ -96,21 +95,48 @@ int main()
     // load and create a texture 
     // -------------------------
     unsigned int texture;
-    glGenTextures(1, &texture);
+    glGenTextures(1, &texture);                                     // one texture with ID 1. We can pass more to this function if we want
     glBindTexture(GL_TEXTURE_2D, texture);                          // all upcoming GL_TEXTURE_2D operations now have effect on this texture object
+    
+    
     // set the texture wrapping parameters
+    // s and t are the texture axis s = x and t = y 
+    // so r will be z axis for 3d Textures 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	// set texture wrapping to GL_REPEAT (default wrapping method)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    
     // set texture filtering parameters
+    // we use GL_LINEAR which is beliniear filtering and has interpolition between pixels
+    // edges will not look like 8 bit graphics
+
+    // you can also decide that filter depends on down or upscaling an image
+    //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    //for downscaling use GL_NEAREST
+    //for upscaling use GL_LINEAR for example
+
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
     // load image, create texture and generate mipmaps
     int width, height, nrChannels;
-
     std::string texturePath = GetWorkingDir() + "\\Textures\\container.jpg";
     unsigned char* data = stbi_load(texturePath.c_str(), &width, &height, &nrChannels, 0);
     if (data)
     {
+
+        /*
+        *   params of glTexImage2D
+            1. Texture target -> we have a 2D Texture
+            2. mipmap level 
+            3. what format we want to store the texture
+            4. width of texture
+            5. height of texture
+            6. should always be 0 -> lagacy stuff dont ask ;)
+            7. and 8. specify format and datatype of source image
+            the image was load with rgb values and stored as chars
+            9. image data
+        */
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
         glGenerateMipmap(GL_TEXTURE_2D);
 

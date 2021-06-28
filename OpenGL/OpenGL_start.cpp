@@ -91,7 +91,9 @@ int main()
     0, 1, 3,  // first Triangle
     1, 2, 3   // second Triangle
     };
-    //vertex buffer objects [VBO] stores a large number of vertices in the GPU's memory
+
+    //vertex buffer objects [VBO] 
+    //stores a large number of vertices in the GPU's memory
     //Just like any object in OpenGL, this buffer has a unique ID corresponding
     //to that buffer, so we can generate one with a buffer ID using the glGenBuffers function: 
     unsigned int VBO;
@@ -113,6 +115,15 @@ int main()
     unsigned int VAO;
     glGenVertexArrays(1, &VAO);
     glBindVertexArray(VAO);
+
+
+    //element buffer objects [EBO]
+    unsigned int EBO;
+    glGenBuffers(1, &EBO);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+
+
     /*
         1. parameter specifies which vertex attribute we want to configure see shader location = 0
         2. argument specifies the size of the vertex attribute. it is vec3 so it will be 3
@@ -122,14 +133,6 @@ int main()
         5.  stride. it is the space between vertex. So 3 times cause eachh vertex has 3 values (x,y,z)
         6. This is the offset of where the position data begins in the buffer.
     */
-
-    unsigned int EBO;
-    glGenBuffers(1, &EBO);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-
-
-
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
 
