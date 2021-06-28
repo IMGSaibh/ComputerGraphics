@@ -94,7 +94,7 @@ int main()
 
     // load and create a texture 
     // -------------------------
-    unsigned int texture;
+    unsigned int texture, texture2;
     glGenTextures(1, &texture);                                     // one texture with ID 1. We can pass more to this function if we want
     glBindTexture(GL_TEXTURE_2D, texture);                          // all upcoming GL_TEXTURE_2D operations now have effect on this texture object
     
@@ -120,6 +120,7 @@ int main()
 
     // load image, create texture and generate mipmaps
     int width, height, nrChannels;
+
     std::string texturePath = GetWorkingDir() + "\\Textures\\container.jpg";
     unsigned char* data = stbi_load(texturePath.c_str(), &width, &height, &nrChannels, 0);
     if (data)
@@ -148,6 +149,62 @@ int main()
     stbi_image_free(data);
 
 
+
+    // second texture also possible
+    // ----------------------------
+
+    glGenTextures(1, &texture2);
+    glBindTexture(GL_TEXTURE_2D, texture2);
+    // set the texture wrapping parameters
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	// set texture wrapping to GL_REPEAT (default wrapping method)
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    // set texture filtering parameters
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    // load image, create texture and generate mipmaps
+
+    // tell stb_image.h to flip loaded texture's on the y-axis.
+    stbi_set_flip_vertically_on_load(true);
+
+    std::string texturePath2 = GetWorkingDir() + "\\Textures\\awesomeface.png";
+    data = stbi_load(texturePath2.c_str(), &width, &height, &nrChannels, 0);
+    if (data)
+    {
+        // note that the awesomeface.png has transparency and thus an alpha channel, so make sure to tell OpenGL the data type is of GL_RGBA
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+        glGenerateMipmap(GL_TEXTURE_2D);
+    }
+    else
+    {
+        std::cout << "Failed to load texture" << std::endl;
+    }
+    stbi_image_free(data);
+
+    // tell opengl for each sampler to which texture unit it belongs to (only has to be done once)
+    // -------------------------------------------------------------------------------------------
+    
+    // don't forget to activate/use the shader before setting uniforms!
+    ourShader.use(); 
+
+    // using glUniform1i we can actually assign a location value to the texture sampler that we use in shader
+    // so we can set multiple textures at once in a fragment shader
+    // This location of a texture is more commonly known as a texture unit. The default texture unit for a texture is 0
+    // 
+    // <<<< !!! note that not all graphics drivers assign a default texture unit so the previous section may not have rendered for you !!!>>>>
+    // 
+    // texture units allow us to use more than one Textures in our shaders
+    
+    //We also have to tell OpenGL which texture unit each shader sampler belongs to so we set 0 and 1 for first and second texture
+    //either set it manually like so:
+    glUniform1i(glGetUniformLocation(ourShader.ID, "texture1"), 0);
+    // or set it via our own texture class
+    ourShader.setInt("texture2", 1);
+
+
+
+
+
+
     // render loop
     // -----------
     while (!glfwWindowShouldClose(window))
@@ -161,8 +218,22 @@ int main()
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        // bind Texture
+        // bind one Texture default
+        //glBindTexture(GL_TEXTURE_2D, texture);
+
+        //bind multiple textures 
+        //we can bind to multiple textures at once as long as we activate the corresponding texture unit first
+        glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, texture);
+        glActiveTexture(GL_TEXTURE1);
+        glBindTexture(GL_TEXTURE_2D, texture2);
+
+        /*
+            OpenGL should have a at least a minimum of 16 
+            texture units for you to use which you can activate using GL_TEXTURE0 to GL_TEXTURE15. 
+            They are defined in order so we could also get GL_TEXTURE8 via GL_TEXTURE0 + 8 for example
+            which is useful when we'd have to loop over several texture units. 
+        */
 
         // render container
         ourShader.use();

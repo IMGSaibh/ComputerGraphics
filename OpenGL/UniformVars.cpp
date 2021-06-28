@@ -29,6 +29,9 @@ const char* vertexShaderSource = "#version 330 core\n"
 "   vertexColor = vec4(0.5, 0.0, 0.0, 1.0);\n"
 "}\0";
 
+//Uniforms are another way to pass data from our application on the CPU to the shaders on the GPU
+//uniforms are global. Global, meaning that a uniform variable is unique per shader program object, 
+//and can be accessed from any shader at any stage in the shader program
 const char* fragmentShaderSource = "#version 330 core\n"
 "out vec4 FragColor;\n"
 "uniform vec4 ourColor;"
@@ -215,6 +218,8 @@ int main()
         float greenValue = (sin(timeValue) / 2.0f) + 0.5f;
         int vertexColorLocation = glGetUniformLocation(shaderProgram, "ourColor");
         glUseProgram(shaderProgram);
+
+        //Uniforms are another way to pass data from our application on the CPU to the shaders on the GPU
         glUniform4f(vertexColorLocation, 0.0f, greenValue, 0.0f, 1.0f);
 
 
