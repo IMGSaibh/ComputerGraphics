@@ -50,11 +50,17 @@ int main()
 
     // build and compile our shader program
     // ------------------------------------
-    std::string vertexshaderPath = GetWorkingDir() + "\\Shader\\vertextTexture.shader";
+    std::string vertexshaderPath = GetWorkingDir() + "\\Shader\\vertexTexture.shader";
     std::string fragmentshaderPath = GetWorkingDir() + "\\Shader\\fragmentTexture.shader";
 
     Shader ourShader(vertexshaderPath.c_str(), fragmentshaderPath.c_str());
 
+    // vertex shader gets its location from vertices[] array
+    // here we have positions, colors, texture coords 
+    // so we declare in our shader
+    // layout(location = 0) in vec3 aPos;
+    // layout(location = 1) in vec3 aColor;
+    // layout(location = 2) in vec2 aTexCoord;
     // set up vertex data (and buffer(s)) and configure vertex attributes
     // ------------------------------------------------------------------
     float vertices[] = {
@@ -199,6 +205,10 @@ int main()
     glUniform1i(glGetUniformLocation(ourShader.ID, "texture1"), 0);
     // or set it via our own texture class
     ourShader.setInt("texture2", 1);
+
+    //summary we have in shader delcared 2 sampler2D one after another
+    //uniform sampler2D ourTexture; -> location 0
+    //uniform sampler2D texture2; -> location 1 
 
 
 
